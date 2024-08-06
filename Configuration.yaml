@@ -1,0 +1,165 @@
+port: 7890
+socks-port: 7891
+mixed-port: 7894
+mode: rule
+allow-lan: false
+log-level: info
+ipv6: true
+find-process-mode: strict
+unified-delay: true
+
+geox-url:
+  geoip: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
+  geosite: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
+  mmdb: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.metadb"
+
+geo-auto-update: false
+geo-update-interval: 24
+
+implementations:
+  - succinct
+  - mph
+geosite-matcher: succinct
+
+external-controller: 0.0.0.0:9090
+external-controller-tls: 0.0.0.0:9443
+external-controller-unix: mihomo.sock
+tcp-concurrent: true
+
+external-ui: /path/to/ui/folder/
+external-ui-name: xd
+external-ui-url: "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip"
+
+# interface-name: en0
+
+
+global-client-fingerprint: chrome
+keep-alive-interval: 15
+
+hosts:
+# '*.mihomo.dev': 127.0.0.1
+# '.dev': 127.0.0.1
+# 'alpha.mihomo.dev': '::1'
+# test.com: [1.1.1.1, 2.2.2.2]
+# home.lan: lan
+
+profile: 
+  store-selected: false
+  store-fake-ip: true
+
+bind-address: "*"
+
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  override-destination: true
+
+sniff: 
+    QUIC:
+      ports: [ 443 ]
+    TLS:
+      ports: [443, 8443]
+    HTTP: 
+      ports: [80, 8080-8880]
+      override-destination: true
+
+dns:
+  enable: true  
+  prefer-h3: true
+  listen: 127.0.0.1:7895
+  ipv6: true
+  ipv6-timeout: 300
+  use-hosts: true
+  enhanced-mode: redir-host
+  fake-ip-range: 240.0.0.0/4
+  nameserver: 
+    - 8.8.8.8
+    - 8.8.4.4
+    - 9.9.9.9:9953
+    - https://dns.adguard.com/dns-query
+    - tls://dns.adguard-dns.com
+    - dhcp://en0 # dns from dhcp
+    - quic://dns.adguard.com:784
+  fallback: 
+    - tcp://9.9.9.9
+    - 8.8.8.8
+    - 8.8.4.4
+    - 9.9.9.9:9953 
+    - 2a10:50c0::ad1:ff
+    - 2a10:50c0::ad2:ff
+  default-nameserver: 
+    - 8.8.8.8
+    - 8.8.4.4
+    - 9.9.9.9:9953
+    - system
+  fake-ip-filter:
+    - stun.l.google.com
+    - WORKGROUP
+
+  fallback-filter:
+    geoip: false
+    geoip-code: ID
+  #   geosite:
+  #     - gfw
+    domain:
+    - googleapis.com
+    - googleapis.cn
+  #     - '+.facebook.com'
+  #     - '+.youtube.com'
+    ipcidr:
+    - 240.0.0.0/4
+
+tun:
+  enable: true
+  stack: system 
+  auto-route: true
+  auto-detect-interface: true
+  dns-hijack:
+    - tcp://8.8.8.8:53 
+  auto-redirect: false
+  strict-route: true
+
+
+proxies:
+proxy-providers:
+  Si:
+    type: file
+    path: "./akun.yaml"
+    url: "https://raw.githubusercontent.com/unarto/configaxis/main/akun.yaml"
+    health-check:
+      enable: true
+      url: http://www.gstatic.com/generate_204
+      interval: 99
+proxy-groups:
+- name: Si
+  type: select
+  strategy: round-robin
+  disable-udp: false
+  use:
+  - Si 
+  url: http://www.gstatic.com/generate_204
+  interval: 360 
+- name: Cemplung
+  type: select
+  disable-udp: false
+  use:
+  - Si
+rule-providers:
+  Cemplung:
+    type: file
+    behavior: classical
+    url: "https://raw.githubusercontent.com/unarto/configaxis/main/Cemplung.yaml"
+    path: "./Cemplung.yaml"
+
+
+rules:
+
+- SRC-IP-CIDR,192.168.0.0/16,Si 
+- DST-PORT,80,Si
+- DST-PORT,443,Si
+- SRC-PORT,7777,Si
+- IP-CIDR,198.18.0.1/16,REJECT,no-resolve
+- DOMAIN-SUFFIX,googlesyndication.com,Si
+- RULE-SET,Cemplung,Cemplung
+- MATCH,Si
