@@ -1,69 +1,47 @@
 proxies:
+  - name: vmess-ws-tls-toip566
+    type: vmess
+    server: sg2.prem-1forcr.shop
+    port: 443
+    uuid: 76e5e6f1-9feb-445b-8061-39c2bd1c4d5d
+    alterId: 0
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: true
+    servername: sg2.prem-1forcr.shop
+    network: ws
+    ws-opts:
+      path: /vmess
+      headers:
+        Host: sg2.prem-1forcr.shop
+  
  -
-  name: sg1-trojan.bonds.id
+  name: sg2.6n6.net
   type: trojan
-  server: sg3-trojan.bonds.id
+  server: sg2.6n6.net
   port: 443
-  password: 82d9b020-496a-11ef-83e1-1239d0255272
+  password: f8dcb2e0-1ad9-11f0-ad9a-1239d0255272
   udp: true
-  network: ws
+  network: tcp
   ws-opts:
-    path: /howdy
+    path: 
     headers:
-      Host: sg3-trojan.bonds.id
-  sni: bsdk.sgsnssdk.com
+      Host: 
+  sni: tnc16-alisg.isnssdk.com
   skip-cert-verify: true
   
  -
-  name: sg2-trojan.bonds.id
+  name: sg3.6n6.net
   type: trojan
-  server: 104.18.51.191
+  server: sg3.6n6.net
   port: 443
-  password: 82d9b020-496a-11ef-83e1-1239d0255272
+  password: 16e98800-1ada-11f0-b062-1239d0255272
   udp: true
-  network: ws
+  network: tcp
   ws-opts:
-    path: /howdy
+    path: 
     headers:
-      Host: sg3-trojan.bonds.id
-  sni: sg3-trojan.bonds.id
+      Host: 
+  sni: tnc16-alisg.isnssdk.com
   skip-cert-verify: true
-
- -
-  name: vlessntls
-  type: vless
-  server: 104.16.108.96
-  port: 443
-  uuid: b0cb1b0b-f5ba-4ca4-a587-cfe48126bff7
-  cipher: true
-  udp: true
-  network: ws
-  ws-opts:
-    path: /vless-ws
-    headers:
-      Host: support.zoom.us.sg1.v-less.biz.id
-  tls: true
-  servername: support.zoom.us.sg1.v-less.biz.id
-  skip-cert-verify: true
-
- -
-  name: hysteria
-  type: hysteria2
-  server: 172.232.235.47
-  ports: 20000-50000
-  auth_str: hwudp
-  alpn:
-    - 
-  protocol: udp
-  up: 100
-  down: 100
-  insecure: true
-  sni: 
-  skip-cert-verify: true 
-  recv_window_conn: 5767168
-  recv_window: 23068672
-  disable_mtu_discovery: true
-  fast-open: true
-  socks5:
-    listen: 127.0.0.1:1080 
-    disableUDP: true
